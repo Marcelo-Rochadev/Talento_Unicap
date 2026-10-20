@@ -5,6 +5,39 @@
 let profile = null;
 let currentTab = 'personal';
 
+// Itens marcados para exclusão em lote, por seção: { experiencia: Set<id>, ... }
+const selectedIds = {};
+
+const reduzMovimento = !!(
+  window.matchMedia &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+);
+
+// Chave de cada seção dentro do objeto `profile`
+const sectionKeys = {
+  experiencia: 'experiencias',
+  formacao: 'formacoes',
+  habilidade: 'habilidades',
+  projeto: 'projetos',
+  certificado: 'certificacoes'
+};
+
+// Nome no singular (e gênero) para as mensagens de sucesso
+const itemNames = {
+  experiencia: { nome: 'Experiência', fem: true },
+  formacao: { nome: 'Formação', fem: true },
+  habilidade: { nome: 'Habilidade', fem: true },
+  projeto: { nome: 'Projeto', fem: false },
+  certificado: { nome: 'Certificado', fem: false }
+};
+
+function toastItem(type, acao) {
+  const n = itemNames[type];
+  if (!n) return;
+  const verbo = acao === 'atualizar' ? 'atualizad' : 'adicionad';
+  Notify.success(`${n.nome} ${verbo}${n.fem ? 'a' : 'o'} com sucesso.`);
+}
+
 const UI = {
   show(el) {
     const element = document.getElementById(el);
@@ -103,6 +136,12 @@ function showFormAlert(alertId, missingLabels) {
     alertEl.textContent = msg;
   }
 
+  clearTimeout(alertEl._leaveTimer);
+  alertEl.classList.remove('is-leaving');
+
+  // Reinicia a animação mesmo que o alerta já esteja visível
+  alertEl.classList.add('hidden');
+  void alertEl.offsetWidth;
   alertEl.classList.remove('hidden');
 
   alertEl.scrollIntoView({
@@ -114,9 +153,21 @@ function showFormAlert(alertId, missingLabels) {
 function hideFormAlert(alertId) {
   const alertEl = document.getElementById(alertId);
 
-  if (alertEl) {
-    alertEl.classList.add('hidden');
+  if (
+    !alertEl ||
+    alertEl.classList.contains('hidden') ||
+    alertEl.classList.contains('is-leaving')
+  ) {
+    return;
   }
+
+  // Recolhe com animação antes de ocultar de vez
+  alertEl.classList.add('is-leaving');
+
+  alertEl._leaveTimer = setTimeout(() => {
+    alertEl.classList.add('hidden');
+    alertEl.classList.remove('is-leaving');
+  }, 260);
 }
 
 // ============================================
@@ -462,7 +513,7 @@ async function savePersonal() {
 
     if (result?.error) {
       console.error('Erro ao salvar dados pessoais:', result);
-      alert('Não foi possível salvar os dados pessoais.');
+      Notify.error('Não foi possível salvar os dados pessoais.');
       return;
     }
 
@@ -472,7 +523,7 @@ async function savePersonal() {
 
     if (nomeResult?.error) {
       console.error('Erro ao salvar o nome:', nomeResult);
-      alert('Os dados foram salvos, mas não foi possível atualizar o nome.');
+      Notify.warning('Os dados foram salvos, mas não foi possível atualizar o nome.');
       return;
     }
 
@@ -500,11 +551,11 @@ async function savePersonal() {
 
     updateProgress();
 
-    alert('Dados pessoais salvos com sucesso!');
+    Notify.success('Seus dados pessoais foram salvos.');
 
   } catch (error) {
     console.error('Erro ao salvar dados pessoais:', error);
-    alert('Ocorreu um erro ao salvar os dados pessoais.');
+    Notify.error('Ocorreu um erro ao salvar os dados pessoais.');
 
   } finally {
     if (btn) {
@@ -1646,6 +1697,15 @@ function renderList(section, type) {
     return;
   }
 
+  // Mantém apenas as seleções de itens que ainda existem
+  const selecionados = getSelected(type);
+
+  [...selecionados].forEach(id => {
+    if (!items.some(i => String(i.id) === id)) {
+      selecionados.delete(id);
+    }
+  });
+
   if (
     items.length === 0 &&
     !config.inline
@@ -1740,6 +1800,8 @@ function renderList(section, type) {
 
       </div>
 
+      ${items.length ? selectionToolbarHtml(type) : ''}
+
       <div
         class="skill-tags"
         id="skillsContainer"
@@ -1748,6 +1810,8 @@ function renderList(section, type) {
         .map(
           item => `
               <div class="skill-tag">
+
+                ${itemCheckboxHtml(type, item.id)}
 
                 <span
                   class="badge badge-blue"
@@ -1793,16 +1857,6 @@ function renderList(section, type) {
                   ></i>
                 </button>
 
-                <span
-                  class="remove"
-                  onclick="deleteItem(
-                    '${type}',
-                    '${item.id}'
-                  )"
-                >
-                  ×
-                </span>
-
               </div>
             `
         )
@@ -1810,16 +1864,21 @@ function renderList(section, type) {
       </div>
     `;
 
+    updateSelectionUI(type);
+
     return;
   }
 
   container.innerHTML =
+    selectionToolbarHtml(type) +
     items
       .map(
         item => `
           <div class="list-item">
 
-            <div>
+            ${itemCheckboxHtml(type, item.id)}
+
+            <div class="list-item-content">
               ${config.render(item)}
             </div>
 
@@ -1841,28 +1900,14 @@ function renderList(section, type) {
                 ></i>
               </button>
 
-              <button
-                class="btn btn-danger btn-sm"
-                onclick="deleteItem(
-                  '${type}',
-                  '${item.id}'
-                )"
-              >
-                <i
-                  class="ph ph-trash"
-                  style="
-                    font-size:18px;
-                    vertical-align:middle;
-                  "
-                ></i>
-              </button>
-
             </div>
 
           </div>
         `
       )
       .join('');
+
+  updateSelectionUI(type);
 }
 
 // ============================================
@@ -1881,7 +1926,7 @@ function warnSectionUnavailable(type) {
     return false;
   }
 
-  alert(
+  Notify.warning(
     `A seção "${config.label}" ainda não está disponível para salvar.`
   );
 
@@ -2071,13 +2116,15 @@ async function addItem(type) {
         CONFIG.skillLevels[0] ||
         '';
 
+      toastItem(type, 'adicionar');
+
     } catch (e) {
       console.error(
         'Erro ao adicionar:',
         e
       );
 
-      alert(
+      Notify.error(
         e?.message ||
         'Erro ao adicionar. Tente novamente.'
       );
@@ -2132,13 +2179,15 @@ async function addItem(type) {
     }
 
     await loadProfile();
+
+    toastItem(type, 'adicionar');
   } catch (error) {
     console.error(
       `Erro ao criar ${type}:`,
       error
     );
 
-    alert(
+    Notify.error(
       error?.message ||
       'Não foi possível salvar.'
     );
@@ -2210,18 +2259,17 @@ async function saveItem(
     hideEditForm(type);
 
     await loadProfile();
+
+    toastItem(type, id ? 'atualizar' : 'adicionar');
   } catch (error) {
     console.error(
       `Erro ao salvar ${type}:`,
       error
     );
 
-    showFormAlert(
-      `alert-${type}`,
-      [
-        error?.message ||
-        'Não foi possível salvar.'
-      ]
+    Notify.error(
+      error?.message ||
+      'Não foi possível salvar.'
     );
   }
 }
@@ -2238,41 +2286,427 @@ async function deleteItem(
     return;
   }
 
-  if (
-    !confirm(
-      'Tem certeza que deseja excluir?'
-    )
-  ) {
+  const nome =
+    itemLabel(
+      type,
+      findItem(type, id)
+    );
+
+  const confirmado =
+    await Notify.confirm({
+      titulo: 'Excluir este item?',
+      mensagem:
+        'Essa ação não pode ser desfeita.',
+      itens: nome ? [nome] : [],
+      confirmar: 'Excluir',
+      tipo: 'danger'
+    });
+
+  if (!confirmado) {
     return;
   }
 
+  await excluirItens(
+    type,
+    [String(id)]
+  );
+}
+
+// ============================================
+// SELEÇÃO EM LOTE
+// ============================================
+
+function getSelected(type) {
+  if (!selectedIds[type]) {
+    selectedIds[type] = new Set();
+  }
+
+  return selectedIds[type];
+}
+
+function findItem(type, id) {
+  return (
+    profile?.[sectionKeys[type]] || []
+  ).find(
+    i => String(i.id) === String(id)
+  );
+}
+
+function findItemElement(type, id) {
+  const check =
+    document.querySelector(
+      `#list-${type} .item-check[value="${CSS.escape(String(id))}"]`
+    );
+
+  return check
+    ? check.closest('.list-item, .skill-tag')
+    : null;
+}
+
+// Texto que identifica o item na confirmação de exclusão
+function itemLabel(type, item) {
+  if (!item) {
+    return '';
+  }
+
+  const juntar = (...partes) =>
+    partes.filter(Boolean).join(' — ');
+
+  switch (type) {
+    case 'experiencia':
+      return juntar(
+        item.cargo,
+        item.empresa
+      );
+
+    case 'formacao':
+      return juntar(
+        item.curso || item.area_estudo,
+        item.instituicao
+      );
+
+    case 'habilidade':
+      return item.nome ||
+        item.habilidade ||
+        '';
+
+    case 'projeto':
+      return item.titulo || '';
+
+    case 'certificado':
+      return juntar(
+        item.nome,
+        item.instituicao
+      );
+
+    default:
+      return '';
+  }
+}
+
+function itemCheckboxHtml(type, id) {
+  const marcado =
+    getSelected(type).has(String(id))
+      ? 'checked'
+      : '';
+
+  return `
+    <input
+      type="checkbox"
+      class="sel-check item-check"
+      value="${id}"
+      ${marcado}
+      onchange="updateSelectionUI('${type}')"
+      aria-label="Selecionar item para excluir"
+    >
+  `;
+}
+
+function selectionToolbarHtml(type) {
+  return `
+    <div
+      class="select-toolbar"
+      id="select-toolbar-${type}"
+    >
+      <label class="select-all">
+        <input
+          type="checkbox"
+          class="sel-check"
+          id="select-all-${type}"
+          onchange="toggleSelectAll('${type}', this.checked)"
+        >
+        <span>Selecionar todos</span>
+      </label>
+
+      <span
+        class="select-count"
+        id="select-count-${type}"
+        aria-live="polite"
+      ></span>
+
+      <div
+        class="select-actions hidden"
+        id="select-actions-${type}"
+      >
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm"
+          onclick="clearSelection('${type}')"
+        >
+          Limpar seleção
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger btn-sm"
+          onclick="deleteSelected('${type}')"
+        >
+          <i class="ph ph-trash"></i>
+          Excluir selecionados
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Sincroniza checkboxes, destaque dos itens e barra de ações
+function updateSelectionUI(type) {
+  const container =
+    document.getElementById(
+      `list-${type}`
+    );
+
+  if (!container) {
+    return;
+  }
+
+  const checks = [
+    ...container.querySelectorAll(
+      '.item-check'
+    )
+  ];
+
+  const marcados =
+    checks.filter(c => c.checked);
+
+  selectedIds[type] = new Set(
+    marcados.map(c => String(c.value))
+  );
+
+  checks.forEach(c => {
+    const alvo =
+      c.closest('.list-item, .skill-tag');
+
+    if (alvo) {
+      alvo.classList.toggle(
+        'is-selected',
+        c.checked
+      );
+    }
+  });
+
+  const todos =
+    document.getElementById(
+      `select-all-${type}`
+    );
+
+  if (todos) {
+    todos.checked =
+      checks.length > 0 &&
+      marcados.length === checks.length;
+
+    todos.indeterminate =
+      marcados.length > 0 &&
+      marcados.length < checks.length;
+  }
+
+  const contador =
+    document.getElementById(
+      `select-count-${type}`
+    );
+
+  if (contador) {
+    contador.textContent =
+      marcados.length === 0
+        ? `${checks.length} ${checks.length === 1 ? 'item cadastrado' : 'itens cadastrados'}`
+        : marcados.length === 1
+          ? '1 selecionado'
+          : `${marcados.length} selecionados`;
+  }
+
+  const barra =
+    document.getElementById(
+      `select-toolbar-${type}`
+    );
+
+  if (barra) {
+    barra.classList.toggle(
+      'has-selection',
+      marcados.length > 0
+    );
+  }
+
+  const acoes =
+    document.getElementById(
+      `select-actions-${type}`
+    );
+
+  if (acoes) {
+    acoes.classList.toggle(
+      'hidden',
+      marcados.length === 0
+    );
+  }
+}
+
+function toggleSelectAll(type, marcar) {
+  document
+    .querySelectorAll(
+      `#list-${type} .item-check`
+    )
+    .forEach(c => {
+      c.checked = marcar;
+    });
+
+  updateSelectionUI(type);
+}
+
+function clearSelection(type) {
+  toggleSelectAll(type, false);
+}
+
+async function deleteSelected(type) {
+  if (warnSectionUnavailable(type)) {
+    return;
+  }
+
+  const ids = [...getSelected(type)];
+
+  if (ids.length === 0) {
+    return;
+  }
+
+  const nomes =
+    ids.map(
+      id => itemLabel(
+        type,
+        findItem(type, id)
+      )
+    );
+
+  const confirmado =
+    await Notify.confirm({
+      titulo:
+        ids.length === 1
+          ? 'Excluir 1 item?'
+          : `Excluir ${ids.length} itens?`,
+      mensagem:
+        'Essa ação não pode ser desfeita.',
+      itens: nomes,
+      confirmar:
+        ids.length === 1
+          ? 'Excluir'
+          : `Excluir ${ids.length} itens`,
+      tipo: 'danger'
+    });
+
+  if (!confirmado) {
+    return;
+  }
+
+  await excluirItens(type, ids);
+}
+
+// Exclui vários itens (um ou mais) com animação e feedback
+async function excluirItens(type, ids) {
   const config =
     sectionConfig[type];
 
-  try {
-    const result =
-      await config.resource.deletar(
-        id
-      );
+  ids.forEach(id => {
+    const el =
+      findItemElement(type, id);
 
-    if (result?.error) {
-      throw new Error(
-        result.error
-      );
+    if (el) {
+      el.classList.add('is-removing');
     }
+  });
 
-    await loadProfile();
-  } catch (error) {
-    console.error(
-      `Erro ao excluir ${type}:`,
-      error
+  document
+    .querySelectorAll(
+      `#select-toolbar-${type} button, #select-toolbar-${type} input`
+    )
+    .forEach(b => {
+      b.disabled = true;
+    });
+
+  const resultados =
+    await Promise.allSettled(
+      ids.map(
+        id => config.resource.deletar(id)
+      )
     );
 
-    alert(
-      error?.message ||
+  const excluidos = [];
+  const falhas = [];
+  let ultimoErro = '';
+
+  resultados.forEach((r, i) => {
+    const erro =
+      r.status === 'rejected'
+        ? (r.reason?.message || 'Erro ao excluir.')
+        : r.value?.error;
+
+    if (erro) {
+      console.error(
+        `Erro ao excluir ${type}:`,
+        erro
+      );
+
+      ultimoErro = String(erro);
+      falhas.push(ids[i]);
+    } else {
+      excluidos.push(ids[i]);
+    }
+  });
+
+  // Itens excluídos saem de cena; os que falharam voltam ao normal
+  falhas.forEach(id => {
+    const el =
+      findItemElement(type, id);
+
+    if (el) {
+      el.classList.remove('is-removing');
+    }
+  });
+
+  await animarSaida(
+    excluidos
+      .map(id => findItemElement(type, id))
+      .filter(Boolean)
+  );
+
+  excluidos.forEach(id => {
+    getSelected(type).delete(id);
+  });
+
+  await loadProfile();
+
+  if (falhas.length === 0) {
+    Notify.success(
+      excluidos.length === 1
+        ? 'Item excluído com sucesso.'
+        : `${excluidos.length} itens excluídos com sucesso.`
+    );
+  } else if (excluidos.length > 0) {
+    Notify.warning(
+      `${excluidos.length} excluído(s), mas ${falhas.length} não puderam ser excluídos. Tente novamente.`
+    );
+  } else {
+    Notify.error(
+      ultimoErro ||
       'Não foi possível excluir.'
     );
   }
+}
+
+function animarSaida(elementos) {
+  if (elementos.length === 0 || reduzMovimento) {
+    return Promise.resolve();
+  }
+
+  elementos.forEach(el => {
+    el.style.setProperty(
+      '--h',
+      el.offsetHeight + 'px'
+    );
+
+    el.classList.remove('is-removing');
+    el.classList.add('is-leaving');
+  });
+
+  return new Promise(
+    resolve => setTimeout(resolve, 340)
+  );
 }
 
 // ============================================
