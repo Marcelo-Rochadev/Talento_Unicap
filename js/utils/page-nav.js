@@ -38,6 +38,36 @@
     'exportacao-instagram.html': { voltar: 'lista-vagas.html', proximo: null }
   };
 
+  // Nome exibido nos botões para cada destino (a lista de vagas muda com o perfil).
+  var NOMES = {
+    'dashboard.html': 'Meu Currículo',
+    'preview.html': 'Preview',
+    'lista-vagas.html': function () {
+      // `modo` só existe dentro da própria lista; nas telas de aluno vem da página atual.
+      var telasAluno = ['preview.html', 'minhas-candidaturas.html', 'caixa-entrada-aluno.html'];
+      return (modoAluno() || telasAluno.indexOf(paginaAtual()) !== -1) ? 'Portal de Vagas' : 'Minhas Vagas';
+    },
+    'minhas-candidaturas.html': 'Minhas Candidaturas',
+    'caixa-entrada-aluno.html': 'Caixa de Entrada',
+    'busca-talentos.html': 'Busca de Talentos',
+    'cadastro-vaga.html': 'Nova Vaga',
+    'caixa-saida-empresa.html': 'Mensagens Enviadas'
+  };
+
+  function nomeDe(url) {
+    if (!url) return '';
+    var chave = String(url).split(/[?#]/)[0].toLowerCase();
+    return resolver(NOMES[chave]) || '';
+  }
+
+  // Define o texto do botão: "Próximo: Preview", "Voltar: Meu Currículo"...
+  function definirRotulo(btn, base, nome) {
+    var span = btn.querySelector('span');
+    var texto = nome ? base + ': ' + nome : base;
+    if (span.textContent !== texto) span.textContent = texto;
+    btn.title = texto;
+  }
+
   function modoAluno() {
     try { return typeof modo !== 'undefined' && modo === 'aluno'; } catch (_) { return false; }
   }
@@ -107,6 +137,18 @@
 
     if (!rota || rota.proximo == null) proximo.disabled = true;
     proximo.addEventListener('click', function () { irPara(rota && resolver(rota.proximo)); });
+
+    var atualizarRotulos = function () {
+      definirRotulo(voltar, 'Voltar', rota ? nomeDe(resolver(rota.voltar)) : '');
+      definirRotulo(proximo, 'Próximo', rota ? nomeDe(resolver(rota.proximo)) : '');
+    };
+    atualizarRotulos();
+    // lista-vagas define `modo` só depois do login: reavalia por alguns segundos.
+    var tentativas = 0;
+    var timer = setInterval(function () {
+      atualizarRotulos();
+      if (++tentativas >= 20) clearInterval(timer);
+    }, 400);
   }
 
   // Dashboard: Voltar/Próximo percorrem as abas; no fim, Próximo abre o Preview.
@@ -125,10 +167,18 @@
       var tabs = document.querySelector('.tabs');
       if (tabs && tabs.scrollIntoView) tabs.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
+    // Texto da aba sem o badge de contagem (ex.: "Mensagens 3" -> "Mensagens")
+    var nomeAba = function (btn) {
+      if (!btn) return '';
+      var c = btn.cloneNode(true);
+      Array.prototype.forEach.call(c.querySelectorAll('.badge'), function (b) { b.remove(); });
+      return c.textContent.replace(/\s+/g, ' ').trim();
+    };
     var atualizar = function () {
-      var i = indiceAtual(), ultimo = botoesAba().length - 1;
+      var lista = botoesAba(), i = indiceAtual(), ultimo = lista.length - 1;
       voltar.disabled = i <= 0;
-      proximo.querySelector('span').textContent = i >= ultimo ? 'Ver Preview' : 'Próximo';
+      definirRotulo(voltar, 'Voltar', i > 0 ? nomeAba(lista[i - 1]) : '');
+      definirRotulo(proximo, 'Próximo', i >= ultimo ? 'Preview' : nomeAba(lista[i + 1]));
     };
 
     voltar.addEventListener('click', function () { irParaAba(indiceAtual() - 1); });
