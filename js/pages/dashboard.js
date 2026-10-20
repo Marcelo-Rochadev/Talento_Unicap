@@ -408,12 +408,12 @@ const personalRequiredFields = [
     label: 'Curso'
   },
   {
-    id: 'cidade',
-    label: 'Cidade'
-  },
-  {
     id: 'estado',
     label: 'Estado'
+  },
+  {
+    id: 'cidade',
+    label: 'Cidade'
   }
 ];
 
