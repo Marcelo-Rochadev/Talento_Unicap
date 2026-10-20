@@ -2383,6 +2383,7 @@ function updateProgress() {
     { done: !!profile.telefone, label: 'Telefone', tab: 'personal', field: 'telefone' },
     { done: !!profile.cidade, label: 'Cidade', tab: 'personal', field: 'cidade' },
     { done: !!profile.experiencias?.length, label: 'Experiência', tab: 'experience' },
+    { done: !!profile.formacoes?.length, label: 'Formação', tab: 'education' },
     { done: !!profile.habilidades?.length, label: 'Habilidade', tab: 'skills' },
     { done: !!profile.projetos?.length, label: 'Projeto', tab: 'projects' },
     { done: !!profile.certificacoes?.length, label: 'Certificado', tab: 'certificates' }
