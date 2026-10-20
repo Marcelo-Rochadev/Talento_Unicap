@@ -466,6 +466,23 @@ async function savePersonal() {
       return;
     }
 
+    // O nome vive na tabela usuarios; sem isto o preview mantém o antigo.
+    const nome = UI.val('nome').trim();
+    const nomeResult = await API.atualizarNome(nome);
+
+    if (nomeResult?.error) {
+      console.error('Erro ao salvar o nome:', nomeResult);
+      alert('Os dados foram salvos, mas não foi possível atualizar o nome.');
+      return;
+    }
+
+    data.nome = nome;
+
+    const userName = document.getElementById('userName');
+    if (userName) {
+      userName.textContent = nome;
+    }
+
     /*
      * Atualiza o profile local com os nomes utilizados
      * pelo dashboard e pelo preview.
