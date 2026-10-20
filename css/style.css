@@ -2225,6 +2225,7 @@ img, svg, video { max-width: 100%; height: auto; }
 .page-nav-btn:active:not(:disabled) { transform: scale(0.97); }
 .page-nav-btn:focus-visible { outline: 2px solid var(--unicap-500); outline-offset: 2px; }
 .page-nav-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.page-nav-btn span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 480px) {
   .page-nav-btn { flex: 1; min-width: 0; }
 }

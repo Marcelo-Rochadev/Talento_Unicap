@@ -466,6 +466,23 @@ async function savePersonal() {
       return;
     }
 
+    // O nome vive na tabela usuarios; sem isto o preview mantém o antigo.
+    const nome = UI.val('nome').trim();
+    const nomeResult = await API.atualizarNome(nome);
+
+    if (nomeResult?.error) {
+      console.error('Erro ao salvar o nome:', nomeResult);
+      alert('Os dados foram salvos, mas não foi possível atualizar o nome.');
+      return;
+    }
+
+    data.nome = nome;
+
+    const userName = document.getElementById('userName');
+    if (userName) {
+      userName.textContent = nome;
+    }
+
     /*
      * Atualiza o profile local com os nomes utilizados
      * pelo dashboard e pelo preview.
@@ -2383,6 +2400,7 @@ function updateProgress() {
     { done: !!profile.telefone, label: 'Telefone', tab: 'personal', field: 'telefone' },
     { done: !!profile.cidade, label: 'Cidade', tab: 'personal', field: 'cidade' },
     { done: !!profile.experiencias?.length, label: 'Experiência', tab: 'experience' },
+    { done: !!profile.formacoes?.length, label: 'Formação', tab: 'education' },
     { done: !!profile.habilidades?.length, label: 'Habilidade', tab: 'skills' },
     { done: !!profile.projetos?.length, label: 'Projeto', tab: 'projects' },
     { done: !!profile.certificacoes?.length, label: 'Certificado', tab: 'certificates' }

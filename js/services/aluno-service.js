@@ -37,6 +37,18 @@ const API = {
     } catch (e) { return this._erro(e, 'Erro ao atualizar perfil'); }
   },
 
+  // O nome completo fica na tabela usuarios (não em perfis_aluno).
+  async atualizarNome(nome) {
+    try {
+      const session = await this._session();
+      const { data, error } = await window.supabaseClient
+        .from('usuarios').update({ nome: (nome || '').trim() })
+        .eq('id', session.user.id).select('id, nome').single();
+      if (error) return this._erro(error, 'Erro ao atualizar nome');
+      return data;
+    } catch (e) { return this._erro(e, 'Erro ao atualizar nome'); }
+  },
+
   async criarPerfil(dto) { return this.atualizarPerfil(dto); },
   async salvarPerfil(dto) { return this.atualizarPerfil(dto); },
 
