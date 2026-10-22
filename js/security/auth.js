@@ -88,6 +88,38 @@ window.Auth = {
     return this.user?.tipoConta || null;
   },
 
+  // Traduz erros do Supabase Auth para mensagens claras ao usuário.
+  _erroCadastro(error) {
+    const msg = String(error?.message || '').toLowerCase();
+    const code = error?.code || '';
+
+    if (code === 'user_already_exists' || msg.includes('already registered')) {
+      return new Error(
+        'Este e-mail já possui cadastro. Faça login ou use outro e-mail.'
+      );
+    }
+    if (msg.includes('error sending confirmation email')) {
+      return new Error(
+        'Não foi possível enviar o e-mail de confirmação. Tente novamente em alguns minutos.'
+      );
+    }
+    if (code === 'over_email_send_rate_limit' || msg.includes('rate limit')) {
+      return new Error(
+        'Muitas tentativas em pouco tempo. Aguarde alguns minutos e tente novamente.'
+      );
+    }
+    if (code === 'weak_password' || msg.includes('password should')) {
+      return new Error('A senha é muito fraca. Use ao menos 6 caracteres.');
+    }
+    return error;
+  },
+
+  // Quando o e-mail já existe, o Supabase responde "sucesso" mas devolve
+  // identities vazio e NÃO envia e-mail. Detectamos esse caso aqui.
+  _emailJaCadastrado(user) {
+    return !!user && Array.isArray(user.identities) && user.identities.length === 0;
+  },
+
   async register(nome, email, senha) {
     const { data, error } =
       await window.supabaseClient.auth.signUp({
@@ -99,7 +131,12 @@ window.Auth = {
         }
       });
 
-    if (error) throw error;
+    if (error) throw this._erroCadastro(error);
+    if (this._emailJaCadastrado(data.user)) {
+      throw new Error(
+        'Este e-mail já possui cadastro. Faça login ou use outro e-mail.'
+      );
+    }
     if (!data.user) {
       throw new Error(
         'O Supabase não retornou o usuário criado.'
@@ -145,7 +182,12 @@ window.Auth = {
         }
       });
 
-    if (error) throw error;
+    if (error) throw this._erroCadastro(error);
+    if (this._emailJaCadastrado(data.user)) {
+      throw new Error(
+        'Este e-mail já possui cadastro. Faça login ou use outro e-mail.'
+      );
+    }
     if (!data.user) {
       throw new Error(
         'O Supabase não retornou o usuário criado.'

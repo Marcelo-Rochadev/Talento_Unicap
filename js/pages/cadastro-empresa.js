@@ -1,4 +1,3 @@
-
 (function () {
 
   "use strict";
@@ -79,7 +78,7 @@
 
     function calcularDigito(base) {
 
-      let peso = base.length - 5;
+      let peso = base.length - 7;
       let soma = 0;
 
       for (const numero of base) {
@@ -543,7 +542,7 @@
             "
           >
             Sua empresa
-            <strong>${nome_empresa}</strong>
+            <strong id="nomeEmpresaOk"></strong>
             foi cadastrada na plataforma.
 
             Redirecionando para o painel...
@@ -556,6 +555,8 @@
       // -----------------------------------------------------
       // Redirecionamento
       // -----------------------------------------------------
+
+      document.getElementById("nomeEmpresaOk").textContent = nome_empresa;
 
       setTimeout(() => {
 
@@ -588,4 +589,3 @@
   });
 
 })();
-

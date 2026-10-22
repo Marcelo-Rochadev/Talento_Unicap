@@ -1,0 +1,1229 @@
+/* ============================================
+   TalentoUNICAP - Visual das páginas internas
+   Carregar DEPOIS de style.css:
+   <link rel="stylesheet" href="css/interno.css">
+   ============================================ */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+    --bg: #F5F9FF;
+    --surface: #FFFFFF;
+    --surface-2: #F3F7FF;
+    --text: #0F172A;
+    --border: #DCE6F7;
+
+    --shadow-sm: 0 1px 2px rgba(0, 40, 120, .06), 0 2px 8px rgba(0, 40, 120, .05);
+    --shadow-md: 0 10px 28px -8px rgba(0, 70, 220, .22), 0 4px 10px rgba(0, 40, 120, .06);
+    --radius: 14px;
+    --ease: cubic-bezier(.22, .61, .36, 1);
+    --focus-ring: 0 0 0 3px rgba(0, 92, 255, .22);
+}
+
+/* ---------- 2. Base e tipografia ---------- */
+body {
+    background:
+        radial-gradient(900px 420px at 100% -10%, rgba(0, 176, 255, .10), transparent 60%),
+        radial-gradient(800px 380px at -10% 0%, rgba(0, 92, 255, .07), transparent 60%),
+        var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    letter-spacing: -0.015em;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+.page-desc,
+.page-intro p {
+    max-width: 70ch;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    font-size: 11.5px;
+    background: var(--grad-brand-h);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+main,
+.page-stack {
+    scroll-margin-top: 80px;
+}
+
+/* foco visível em tudo que é clicável */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+    outline: 2px solid #005CFF;
+    outline-offset: 2px;
+}
+
+/* ---------- 3. Navbar ---------- */
+.navbar {
+    background: rgba(255, 255, 255, .82);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid rgba(0, 92, 255, .10);
+}
+
+.navbar.is-scrolled {
+    box-shadow: 0 6px 24px rgba(0, 60, 200, .10);
+}
+
+.navbar-brand {
+    color: transparent;
+    background: var(--grad-brand-h);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.navbar-brand span {
+    color: var(--text);
+    -webkit-text-fill-color: var(--text);
+}
+
+.nav-text-link {
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--gray-600);
+}
+
+.nav-text-link:hover {
+    background: rgba(0, 92, 255, .07);
+    color: var(--unicap-600);
+    text-decoration: none;
+}
+
+.nav-text-link.active {
+    color: var(--unicap-600);
+}
+
+.nav-text-link::after {
+    background: var(--grad-brand-h);
+    height: 3px;
+    bottom: 2px;
+}
+
+/* avatar do usuário com anel em degradê (aplique a classe .nav-avatar na foto/inicial) */
+.nav-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--unicap-600);
+    background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--grad-brand) border-box;
+    border: 2px solid transparent;
+    object-fit: cover;
+}
+
+/* menu do celular como painel deslizante */
+@media (max-width: 768px) {
+    .navbar.has-toggle .nav-links {
+        box-shadow: -12px 0 40px rgba(0, 30, 120, .18);
+        border-left: 1px solid var(--border);
+    }
+}
+
+/* ---------- 4. Cabeçalho de página ---------- */
+.page-intro {
+    position: relative;
+    padding: 22px 24px;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(0, 176, 255, .12), rgba(0, 92, 255, .08) 55%, rgba(0, 0, 255, .06));
+    border: 1px solid rgba(0, 92, 255, .14);
+    overflow: hidden;
+}
+
+.page-intro::after {
+    content: '';
+    position: absolute;
+    right: -60px;
+    top: -60px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 176, 255, .28), transparent 70%);
+    pointer-events: none;
+}
+
+.page-intro h1,
+.page-intro h2 {
+    margin-bottom: 4px;
+}
+
+/* ---------- 5. Botões ---------- */
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: .005em;
+}
+
+.btn:not(:disabled):hover {
+    transform: translateY(-1px);
+}
+
+.btn:not(:disabled):active {
+    transform: translateY(0) scale(.97);
+}
+
+/* ciano com texto branco tem pouco contraste: o texto fica sobre a parte mais azul do degradê */
+.btn-primary {
+    background-image: var(--grad-brand-h);
+    background-size: 220% 100%;
+    background-position: 30% 0;
+    box-shadow: 0 4px 14px rgba(0, 92, 255, .28);
+}
+
+.btn-primary:hover {
+    background-position: 100% 0;
+    box-shadow: 0 8px 22px rgba(0, 60, 255, .38);
+}
+
+.btn-outline {
+    background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--grad-brand-h) border-box;
+    border: 1.5px solid transparent;
+    color: var(--unicap-600);
+}
+
+.btn-outline:hover {
+    background: linear-gradient(var(--unicap-50), var(--unicap-50)) padding-box, var(--grad-brand-h) border-box;
+}
+
+.btn-secondary {
+    border-color: var(--border);
+    background: var(--surface);
+}
+
+.btn-secondary:hover {
+    background: var(--surface-2);
+    border-color: #B7CDF5;
+}
+
+/* ---------- 6. Cards ---------- */
+.card,
+.vaga-card,
+.talento-card,
+.candidato-card,
+.candidatura-card,
+.list-item,
+.filters-panel,
+.empty-state {
+    background-color: var(--surface);
+    border-color: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.vaga-card,
+.talento-card,
+.candidato-card,
+.candidatura-card {
+    position: relative;
+    transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s ease;
+}
+
+/* barrinha em degradê no topo */
+.vaga-card::before,
+.talento-card::before,
+.candidato-card::before,
+.candidatura-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 4px;
+    border-radius: var(--radius) var(--radius) 0 0;
+    background: var(--grad-brand-h);
+    opacity: .55;
+    transition: opacity .3s ease;
+    pointer-events: none;
+}
+
+/* borda em degradê + elevação no hover */
+.vaga-card:hover,
+.talento-card:hover,
+.candidato-card:hover,
+.candidatura-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
+    background-image: linear-gradient(var(--surface), var(--surface)), var(--grad-brand);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+.vaga-card:hover::before,
+.talento-card:hover::before,
+.candidato-card:hover::before,
+.candidatura-card:hover::before {
+    opacity: 1;
+}
+
+.vaga-card:hover,
+.talento-card:hover,
+.candidato-card:hover,
+.candidatura-card:hover {
+    border: 1px solid transparent;
+}
+
+.candidato-card.is-melhor {
+    box-shadow: 0 0 0 2px rgba(0, 92, 255, .35), var(--shadow-md);
+}
+
+.card-header {
+    border-bottom-color: var(--border);
+}
+
+.vaga-card h3,
+.talento-info h3 {
+    color: var(--text);
+}
+
+/* entrada em sequência (usa a classe .reveal que já existe) */
+.vagas-grid>.reveal:nth-child(1),
+.talentos-grid>.reveal:nth-child(1) {
+    transition-delay: .02s;
+}
+
+.vagas-grid>.reveal:nth-child(2),
+.talentos-grid>.reveal:nth-child(2) {
+    transition-delay: .08s;
+}
+
+.vagas-grid>.reveal:nth-child(3),
+.talentos-grid>.reveal:nth-child(3) {
+    transition-delay: .14s;
+}
+
+.vagas-grid>.reveal:nth-child(4),
+.talentos-grid>.reveal:nth-child(4) {
+    transition-delay: .20s;
+}
+
+.vagas-grid>.reveal:nth-child(5),
+.talentos-grid>.reveal:nth-child(5) {
+    transition-delay: .26s;
+}
+
+.vagas-grid>.reveal:nth-child(n+6),
+.talentos-grid>.reveal:nth-child(n+6) {
+    transition-delay: .32s;
+}
+
+/* ---------- 7. Avatares com iniciais ---------- */
+.talento-avatar,
+.msg-avatar {
+    background: var(--grad-brand);
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 92, 255, .14);
+    text-transform: uppercase;
+}
+
+.talento-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+}
+
+.talento-avatar img,
+.msg-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ---------- 8. Compatibilidade ---------- */
+.compat-bar {
+    height: 10px;
+    background: var(--surface-2);
+    box-shadow: inset 0 1px 2px rgba(0, 40, 120, .10);
+}
+
+.compat-bar>i {
+    background: var(--grad-brand-h);
+    transition: width .9s var(--ease);
+}
+
+.compat .compat-valor {
+    background: var(--grad-brand-h);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.compat.nivel-alto .compat-valor {
+    background: none;
+    -webkit-text-fill-color: var(--green-700);
+}
+
+.compat.nivel-medio .compat-valor {
+    background: none;
+    -webkit-text-fill-color: var(--gold-500);
+}
+
+.compat.nivel-baixo .compat-valor {
+    background: none;
+    -webkit-text-fill-color: var(--gray-500);
+}
+
+.compat.nivel-medio .compat-bar>i {
+    background: linear-gradient(90deg, #FBBF24, #F59E0B);
+}
+
+.compat.nivel-alto .compat-bar>i {
+    background: linear-gradient(90deg, #4ADE80, #16A34A);
+}
+
+/* anel circular opcional: <div class="compat-ring" style="--p:78"><span>78%</span></div> */
+.compat-ring {
+    --p: 0;
+    --size: 64px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(closest-side, var(--surface) 76%, transparent 78% 100%),
+        conic-gradient(#00B0FF, #005CFF calc(var(--p) * .5%), #0000FF calc(var(--p) * 1%), var(--surface-2) 0);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--unicap-600);
+}
+
+/* ---------- 9. Chips e tags unificados ---------- */
+.tag,
+.skill-tag,
+.talento-skill-chip,
+.skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: linear-gradient(135deg, rgba(0, 176, 255, .12), rgba(0, 92, 255, .08));
+    border: 1px solid rgba(0, 92, 255, .20);
+    color: var(--unicap-600);
+    transition: transform .2s ease, background .2s ease;
+}
+
+.tag:hover,
+.skill-tag:hover,
+.talento-skill-chip:hover {
+    transform: translateY(-1px);
+    background: rgba(0, 92, 255, .14);
+}
+
+.skill-chip.ok {
+    background: var(--green-100);
+    border-color: #86EFAC;
+    color: var(--green-700);
+}
+
+.skill-chip.falta {
+    background: var(--surface-2);
+    border: 1px dashed var(--gray-300);
+    color: var(--gray-500);
+}
+
+/* ---------- 10. Badges de status (com ponto) ---------- */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 11px;
+}
+
+.badge::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.badge-blue {
+    background: rgba(0, 92, 255, .10);
+    color: var(--unicap-600);
+}
+
+/* novo */
+.badge-gold,
+.badge-orange {
+    background: #FFF7CC;
+    color: var(--gold-500);
+}
+
+/* em análise */
+.badge-green {
+    background: var(--green-100);
+    color: var(--green-700);
+}
+
+/* aprovado */
+.badge-red {
+    background: #FEE2E2;
+    color: var(--red-500);
+}
+
+/* recusado */
+.badge-gray {
+    background: var(--gray-100);
+    color: var(--gray-600);
+}
+
+/* ---------- 11. Formulários ---------- */
+.form-group label {
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select,
+.search-box,
+.toolbar-filters select {
+    background-color: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+    border-color: #B7CDF5;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--unicap-500);
+    box-shadow: var(--focus-ring);
+}
+
+.search-box:focus-within {
+    border-color: var(--unicap-500);
+    box-shadow: var(--focus-ring);
+}
+
+/* campo com ícone: <div class="input-icon"><i class="ph ph-envelope"></i><input ...></div> */
+.input-icon {
+    position: relative;
+}
+
+.input-icon>i,
+.input-icon>svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+    pointer-events: none;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.input-icon>input {
+    padding-left: 40px !important;
+}
+
+.input-icon:focus-within>i,
+.input-icon:focus-within>svg {
+    color: var(--unicap-500);
+}
+
+/* sucesso no campo: adicione .is-valid ao .form-group */
+.form-group.is-valid input,
+.form-group.is-valid textarea,
+.form-group.is-valid select {
+    border-color: var(--green-500);
+}
+
+.form-group.is-valid input:focus {
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, .18);
+}
+
+/* etapas do formulário longo: <ol class="steps"><li class="done">Dados</li><li class="current">Formação</li><li>Skills</li></ol> */
+.steps {
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    margin: 0 0 22px;
+    padding: 0;
+    counter-reset: step;
+}
+
+.steps li {
+    flex: 1;
+    position: relative;
+    padding-top: 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--gray-500);
+}
+
+.steps li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--surface-2);
+}
+
+.steps li.done::before,
+.steps li.current::before {
+    background: var(--grad-brand-h);
+}
+
+.steps li.current {
+    color: var(--unicap-600);
+}
+
+.steps li.done {
+    color: var(--text);
+}
+
+/* ---------- 12. Abas ---------- */
+.tabs {
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+    border-radius: 10px 10px 0 0;
+}
+
+.tab-btn:hover {
+    background: rgba(0, 92, 255, .05);
+    color: var(--unicap-600);
+}
+
+.tab-btn.active {
+    color: var(--unicap-600);
+    border-bottom-color: transparent;
+    position: relative;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: var(--grad-brand-h);
+}
+
+/* ---------- 13. Tabelas e listas ---------- */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+}
+
+thead th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--gray-500);
+    background: var(--surface-2);
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+tbody td {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+tbody tr:nth-child(even) {
+    background: rgba(0, 92, 255, .025);
+}
+
+tbody tr {
+    transition: background .15s ease;
+}
+
+tbody tr:hover {
+    background: rgba(0, 92, 255, .07);
+}
+
+.list-item {
+    transition: transform .2s var(--ease), box-shadow .2s ease, border-color .2s ease;
+}
+
+.list-item:hover {
+    border-color: #B7CDF5;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+/* ---------- 14. Estados vazios e skeleton ---------- */
+.empty-state {
+    border: 1.5px dashed #B7CDF5;
+    background: linear-gradient(180deg, var(--surface), var(--surface-2));
+}
+
+.empty-state .icon {
+    background: var(--grad-brand);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(0, 92, 255, .30);
+    animation: emptyFloat 4s ease-in-out infinite;
+}
+
+@keyframes emptyFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* use <div class="skeleton" style="height:16px;width:60%"></div> enquanto carrega */
+.skeleton {
+    display: block;
+    border-radius: 8px;
+    min-height: 12px;
+    background: linear-gradient(90deg, var(--surface-2) 25%, #E3ECFB 45%, var(--surface-2) 65%);
+    background-size: 300% 100%;
+    animation: skeleton 1.4s ease-in-out infinite;
+}
+
+.skeleton.circle {
+    border-radius: 50%;
+}
+
+@keyframes skeleton {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+/* ---------- 15. Mensagens ---------- */
+.msg-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top-color: var(--border);
+}
+
+.msg-bubble {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin-bottom: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.msg-bubble.sent {
+    align-self: flex-end;
+    background: var(--grad-brand);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.msg-bubble.sent .label {
+    color: rgba(255, 255, 255, .85);
+}
+
+.msg-bubble.reply {
+    align-self: flex-start;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+}
+
+.msg-bubble .hora {
+    display: block;
+    margin-top: 4px;
+    font-size: 10.5px;
+    opacity: .7;
+}
+
+/* indicador "digitando": <span class="typing"><i></i><i></i><i></i></span> */
+.typing {
+    display: inline-flex;
+    gap: 4px;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border-radius: 16px;
+}
+
+.typing i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--unicap-500);
+    animation: typing 1.2s infinite ease-in-out;
+}
+
+.typing i:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.typing i:nth-child(3) {
+    animation-delay: .3s;
+}
+
+@keyframes typing {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: .4;
+    }
+
+    30% {
+        transform: translateY(-5px);
+        opacity: 1;
+    }
+}
+
+/* ---------- 16. Modais, login e rodapé ---------- */
+.modal-overlay {
+    background: rgba(8, 20, 70, .45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background: var(--surface);
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(0, 30, 120, .35);
+    border-top: 4px solid transparent;
+    background-image: linear-gradient(var(--surface), var(--surface)), var(--grad-brand-h);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+.modal-header,
+.modal-footer {
+    border-color: var(--border);
+}
+
+.auth-page {
+    background:
+        radial-gradient(600px 320px at 15% 10%, rgba(0, 176, 255, .22), transparent 70%),
+        radial-gradient(600px 360px at 90% 90%, rgba(0, 0, 255, .16), transparent 70%);
+}
+
+.auth-card {
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.auth-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 5px;
+    background: var(--grad-brand-h);
+}
+
+.footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    position: relative;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 2px;
+    background: var(--grad-brand-h);
+    opacity: .6;
+}
+
+.vaga-dropdown {
+    background: var(--surface);
+    border-color: var(--border);
+    border-radius: 12px;
+}
+
+.vaga-dropdown button {
+    color: var(--text);
+}
+
+.vaga-dropdown button:hover {
+    background: var(--surface-2);
+}
+
+.icon-btn:hover {
+    background: rgba(0, 92, 255, .08);
+    color: var(--unicap-600);
+}
+
+/* ---------- 17. Espaçamento ---------- */
+.page-stack>*+* {
+    margin-top: 28px;
+}
+
+.vagas-grid,
+.talentos-grid {
+    gap: 20px;
+}
+
+/* ---------- 18. Celular ---------- */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 26px;
+    }
+
+    h2 {
+        font-size: 21px;
+    }
+
+    .btn,
+    .icon-btn,
+    .tab-btn,
+    .nav-text-link,
+    .form-group input,
+    .form-group select {
+        min-height: 44px;
+    }
+
+    .icon-btn {
+        min-width: 44px;
+    }
+
+    .page-intro {
+        padding: 18px;
+    }
+
+    .msg-bubble {
+        max-width: 92%;
+    }
+}
+
+/* ---------- 19. Toque: sem "pulinho" de hover ---------- */
+@media (hover: none) {
+
+    .vaga-card:hover,
+    .talento-card:hover,
+    .candidato-card:hover,
+    .candidatura-card:hover,
+    .list-item:hover {
+        transform: none;
+    }
+}
+
+/* ---------- 20. Botão do modo escuro + animação de troca ---------- */
+.theme-toggle {
+  position: fixed; right: 18px; bottom: 18px; z-index: 900;
+  width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer; padding: 0;
+  background: var(--grad-brand); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 22px rgba(0, 60, 255, .4);
+  transition: transform .25s var(--ease), box-shadow .25s ease;
+  overflow: hidden;
+}
+.theme-toggle:hover { transform: scale(1.1); box-shadow: 0 12px 28px rgba(0, 60, 255, .5); }
+.theme-toggle:active { transform: scale(.92); }
+.theme-toggle svg {
+  position: absolute; width: 22px; height: 22px;
+  transition: transform .6s var(--ease), opacity .35s ease;
+}
+/* modo claro: mostra a lua (para ir ao escuro) */
+.theme-toggle .sun  { opacity: 0; transform: rotate(-120deg) scale(.3); }
+.theme-toggle .moon { opacity: 1; transform: rotate(0) scale(1); }
+/* modo escuro: mostra o sol (para voltar ao claro) */
+[data-theme="dark"] .theme-toggle .sun  { opacity: 1; transform: rotate(0) scale(1); }
+[data-theme="dark"] .theme-toggle .moon { opacity: 0; transform: rotate(120deg) scale(.3); }
+
+/* Transição em círculo que nasce no botão (navegadores com View Transitions) */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
+
+/* Alternativa para navegadores sem View Transitions: cores mudam suavemente */
+html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after {
+  transition: background-color .5s ease, color .5s ease, border-color .5s ease,
+              box-shadow .5s ease, fill .5s ease, stroke .5s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle svg { transition: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  html.theme-fade, html.theme-fade * { transition: none !important; }
+}
+
+/* ---------- 21. Modo escuro ---------- */
+[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #070D24;
+    --surface: #0E1736;
+    --surface-2: #14204A;
+    --text: #E8EEFF;
+    --border: #22336B;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .35), 0 2px 8px rgba(0, 0, 0, .25);
+    --shadow-md: 0 14px 34px -8px rgba(0, 120, 255, .30), 0 4px 12px rgba(0, 0, 0, .4);
+
+    /* inverte a escala de cinzas */
+    --gray-50: #0B1230;
+    --gray-100: #14204A;
+    --gray-200: #22336B;
+    --gray-300: #4A5B94;
+    --gray-400: #7384B8;
+    --gray-500: #94A3D0;
+    --gray-600: #B2BFE3;
+    --gray-700: #CBD5F0;
+    --gray-800: #DCE4F8;
+    --gray-900: #EEF2FF;
+    --white: #0E1736;
+    --unicap-50: #0F2150;
+    --unicap-100: #123070;
+    --green-100: rgba(22, 163, 74, .2);
+}
+
+[data-theme="dark"] body {
+    background: radial-gradient(900px 420px at 100% -10%, rgba(0, 120, 255, .18), transparent 60%), var(--bg);
+}
+
+[data-theme="dark"] .navbar {
+    background: rgba(10, 16, 44, .82);
+    border-bottom-color: var(--border);
+}
+
+[data-theme="dark"] .navbar-brand span {
+    color: var(--text);
+    -webkit-text-fill-color: var(--text);
+}
+
+[data-theme="dark"] .modal,
+[data-theme="dark"] .card,
+[data-theme="dark"] .vaga-dropdown,
+[data-theme="dark"] .filters-panel,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .footer,
+[data-theme="dark"] .features,
+[data-theme="dark"] .list-item {
+    background-color: var(--surface);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: var(--surface);
+    color: var(--gray-800);
+}
+
+[data-theme="dark"] .btn-outline {
+    background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--grad-brand-h) border-box;
+    color: #7DB8FF;
+}
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group textarea,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .search-box,
+[data-theme="dark"] .toolbar-filters select {
+    background-color: var(--surface-2);
+    color: var(--text);
+}
+
+[data-theme="dark"] a {
+    color: #6FB1FF;
+}
+
+[data-theme="dark"] a.btn-primary {
+    color: #fff;
+}
+
+[data-theme="dark"] a.btn-secondary {
+    color: var(--gray-800);
+}
+
+[data-theme="dark"] a:hover {
+    color: #9CCBFF;
+}
+
+[data-theme="dark"] .tag,
+[data-theme="dark"] .skill-tag,
+[data-theme="dark"] .talento-skill-chip {
+    color: #8CC2FF;
+}
+
+[data-theme="dark"] .page-intro {
+    background: linear-gradient(135deg, rgba(0, 176, 255, .16), rgba(0, 0, 255, .14));
+    border-color: var(--border);
+}
+
+[data-theme="dark"] .badge-blue {
+    color: #8CC2FF;
+}
+
+[data-theme="dark"] .badge-red {
+    background: rgba(185, 28, 28, .25);
+    color: #FCA5A5;
+}
+
+[data-theme="dark"] .badge-gold,
+[data-theme="dark"] .badge-orange {
+    background: rgba(255, 255, 0, .12);
+    color: #FDE68A;
+}
+
+[data-theme="dark"] .nav-text-link:hover,
+[data-theme="dark"] .nav-text-link.active {
+    color: #8CC2FF;
+}
+
+[data-theme="dark"] .tab-btn.active,
+[data-theme="dark"] .eyebrow {
+    color: #8CC2FF;
+}
+
+[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg, #14204A 25%, #1C2C62 45%, #14204A 65%);
+    background-size: 300% 100%;
+}
+
+[data-theme="dark"] .vaga-card:hover,
+[data-theme="dark"] .talento-card:hover,
+[data-theme="dark"] .candidato-card:hover,
+[data-theme="dark"] .candidatura-card:hover {
+    background-image: linear-gradient(var(--surface), var(--surface)), var(--grad-brand);
+}
+
+/* ---------- 21b. Botões do hero: todos no padrão do "Painel de Vagas" ---------- */
+/* (fundo da cor da página, borda em degradê, texto azul; vale nos modos claro e escuro) */
+.hero .btn.btn-primary,
+.hero .btn.btn-secondary,
+.hero .btn.btn-outline {
+  background: linear-gradient(var(--surface), var(--surface)) padding-box, var(--grad-brand-h) border-box;
+  border: 1.5px solid transparent;
+  color: var(--unicap-600);
+  box-shadow: 0 6px 18px rgba(0, 0, 70, .25);
+}
+.hero .btn.btn-primary:hover,
+.hero .btn.btn-secondary:hover,
+.hero .btn.btn-outline:hover {
+  background: linear-gradient(var(--unicap-50), var(--unicap-50)) padding-box, var(--grad-brand-h) border-box;
+  color: var(--unicap-600);
+  box-shadow: 0 10px 24px rgba(0, 0, 70, .35);
+}
+
+[data-theme="dark"] .hero .btn.btn-primary,
+[data-theme="dark"] .hero .btn.btn-secondary,
+[data-theme="dark"] .hero .btn.btn-outline { color: #7DB8FF; }
+[data-theme="dark"] .hero .btn.btn-primary:hover,
+[data-theme="dark"] .hero .btn.btn-secondary:hover,
+[data-theme="dark"] .hero .btn.btn-outline:hover { color: #A8D1FF; }
+
+/* textos do hero no modo escuro continuam claros */
+[data-theme="dark"] .hero p,
+[data-theme="dark"] .company-hero p,
+[data-theme="dark"] .empresa-hero p { color: #D2EEFF; }
+
+/* ---------- 23. Rolagem: suave + itens que aparecem ao entrar na tela ---------- */
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+
+.sfx {
+  opacity: 0;
+  transform: translate3d(0, var(--sfx-y, 40px), 0) scale(.985);
+  transition: opacity .75s var(--ease), transform .9s var(--ease);
+  will-change: opacity, transform;
+}
+.sfx.sfx-from-top { --sfx-y: -40px; }
+.sfx[data-sfx="left"]  { transform: translate3d(-48px, 0, 0); }
+.sfx[data-sfx="right"] { transform: translate3d(48px, 0, 0); }
+.sfx[data-sfx="zoom"]  { transform: scale(.9); }
+.sfx.sfx-in { opacity: 1; transform: none; }
+/* se o ux.js recolocar .reveal em um item que está animando, a minha animação continua mandando */
+.sfx.reveal { opacity: 0; transform: translate3d(0, var(--sfx-y, 40px), 0) scale(.985);
+  transition: opacity .75s var(--ease), transform .9s var(--ease); }
+.sfx.reveal.is-visible:not(.sfx-in) { opacity: 0; transform: translate3d(0, var(--sfx-y, 40px), 0) scale(.985); }
+.sfx.sfx-in.reveal, .sfx.sfx-in.reveal.is-visible { opacity: 1; transform: none; }
+
+
+
+/* entrada do texto do hero ao carregar a página */
+.hero > .container > * { animation: heroRise .8s var(--ease) both; }
+.hero > .container > *:nth-child(2) { animation-delay: .08s; }
+.hero > .container > *:nth-child(3) { animation-delay: .16s; }
+.hero > .container > *:nth-child(4) { animation-delay: .24s; }
+.hero > .container > *:nth-child(n+5) { animation-delay: .32s; }
+@keyframes heroRise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+
+.hero-bg { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .sfx { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .hero > .container > * { animation: none; }
+}
+
+/* ---------- 22. Menos movimento ---------- */
+@media (prefers-reduced-motion: reduce) {
+
+    .empty-state .icon,
+    .skeleton,
+    .typing i {
+        animation: none !important;
+    }
+
+    .vaga-card,
+    .talento-card,
+    .candidato-card,
+    .candidatura-card,
+    .list-item {
+        transition: none;
+    }
+}

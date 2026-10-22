@@ -204,7 +204,7 @@ async function exportDOCX(includeLogo = true) {
     ]);
     const saveAs = fileSaverMod.saveAs || fileSaverMod.default?.saveAs || fileSaverMod.default;
 
-    const BRAND = '6B001B'; // vinho UNICAP (--unicap-600)
+    const BRAND = '0000FF'; // azul elétrico (--unicap-600)
     const MUTED = '71717A'; // --gray-500
 
     const formatDate = (d) => d ? new Date(d + 'T00:00:00').toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }) : '';
