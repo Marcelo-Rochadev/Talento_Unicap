@@ -301,8 +301,8 @@
 
     // Fundo em degradê (cores oficiais UNICAP)
     const grad = ctx.createLinearGradient(0, 0, W * 0.4, H);
-    grad.addColorStop(0, "#005CFF");
-    grad.addColorStop(1, "#0000B3");
+    grad.addColorStop(0, "#b0102b");
+    grad.addColorStop(1, "#570016");
     ctx.fillStyle = grad;
     roundRect(ctx, 0, 0, W, H, 44);
     ctx.fill();
@@ -312,7 +312,7 @@
     ctx.beginPath();
     ctx.arc(pad + 26, pad + 26, 26, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "#FFFF00";
+    ctx.strokeStyle = "#c28330";
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(pad + 26, pad + 26, 18, 0, Math.PI * 2);
@@ -322,7 +322,7 @@
     ctx.font = "700 26px Inter, Arial, sans-serif";
     ctx.textBaseline = "middle";
     ctx.fillText("Talentos UNICAP", pad + 64, pad + 18);
-    ctx.fillStyle = "#FFFF00";
+    ctx.fillStyle = "#c28330";
     ctx.font = "700 14px Inter, Arial, sans-serif";
     ctx.fillText("VAGAS EXCLUSIVAS", pad + 64, pad + 44);
 
@@ -331,10 +331,10 @@
     const pillWidth = ctx.measureText(pillText).width + 40;
     const pillX = W - pad - pillWidth;
     const pillY = pad;
-    ctx.fillStyle = "#FFFF00";
+    ctx.fillStyle = "#c28330";
     roundRect(ctx, pillX, pillY, pillWidth, 44, 22);
     ctx.fill();
-    ctx.fillStyle = "#0000B3";
+    ctx.fillStyle = "#570016";
     ctx.textAlign = "center";
     ctx.fillText(pillText, pillX + pillWidth / 2, pillY + 22);
     ctx.textAlign = "left";
@@ -349,7 +349,7 @@
     // Empresa (opcional)
     let cursorY = titleY + linesUsed * 62 + 20;
     if (vaga.empresa) {
-      ctx.fillStyle = "#FFFF00";
+      ctx.fillStyle = "#c28330";
       ctx.font = "700 30px Inter, Arial, sans-serif";
       ctx.fillText(vaga.empresa, pad, cursorY);
     }
@@ -380,10 +380,10 @@
     // CTA
     const ctaH = 76;
     const ctaY = H - pad - ctaH;
-    ctx.fillStyle = "#FFFF00";
+    ctx.fillStyle = "#c28330";
     roundRect(ctx, pad, ctaY, W - pad * 2, ctaH, ctaH / 2);
     ctx.fill();
-    ctx.fillStyle = "#0000B3";
+    ctx.fillStyle = "#570016";
     ctx.font = "700 26px Inter, Arial, sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

@@ -242,7 +242,7 @@ a:hover {
 .form-group select:focus {
   outline: none;
   border-color: var(--unicap-500);
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+  box-shadow: 0 0 0 3px rgba(175, 30, 54, 0.1);
 }
 
 /* CAMPOS OBRIGATÓRIOS */
@@ -2220,7 +2220,7 @@ img, svg, video { max-width: 100%; height: auto; }
 }
 .page-nav-btn:hover:not(:disabled) {
   transform: scale(1.06);
-  box-shadow: 0 6px 16px rgba(30, 64, 175, 0.18);
+  box-shadow: 0 6px 16px rgba(175, 30, 54, 0.18);
 }
 .page-nav-btn:active:not(:disabled) { transform: scale(0.97); }
 .page-nav-btn:focus-visible { outline: 2px solid var(--unicap-500); outline-offset: 2px; }

@@ -33,7 +33,7 @@
 .form-group select:focus {
   outline: none;
   border-color: var(--unicap-500);
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+  box-shadow: 0 0 0 3px rgba(175, 30, 54, 0.1);
 }
 
 /* CAMPOS OBRIGATÓRIOS */

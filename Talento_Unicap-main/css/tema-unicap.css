@@ -1,24 +1,30 @@
 /* ============================================
-   TalentoUNICAP - Tema azul (paleta + degradê + fundo animado do hero)
+   TalentoUNICAP - Tema UNICAP: vermelho, bordô e dourado da Asa Branca (paleta + degradê + fundo animado do hero)
    Carregar DEPOIS de style.css e ANTES de interno.css
    ============================================ */
 
 :root {
-  --unicap-50: #EAF7FF;
-  --unicap-100: #D2EEFF;
-  --unicap-200: #FFFF00;
-  --unicap-300: #6FCBFF;
-  --unicap-400: #00B0FF;
-  --unicap-500: #005CFF;
-  --unicap-600: #0000FF;
-  --unicap-700: #0000B3;
-  --gold-400: #FFFF00;
-  --gold-500: #7A6C00;
+  /* PALETA UNICAP: vermelho -> vermelho bordô, com o dourado da logo da Asa Branca (#C28330) como cor de apoio */
+  --unicap-50: #fdf2f4;
+  --unicap-100: #f8e1e6;
+  --unicap-200: #e9bfc8;
+  --unicap-300: #dc8f9f;
+  --unicap-400: #e0364c;   /* vermelho vivo */
+  --unicap-500: #b0102b;   /* vermelho UNICAP */
+  --unicap-600: #7a001e;   /* bordô */
+  --unicap-700: #570016;   /* bordô escuro */
 
-  /* DEGRADÊ DA MARCA: azul-ciano -> azul intermediário -> azul elétrico */
-  --grad-brand: linear-gradient(135deg, #00B0FF 0%, #005CFF 50%, #0000FF 100%);
-  --grad-brand-rev: linear-gradient(135deg, #0000FF 0%, #005CFF 50%, #00B0FF 100%);
-  --grad-brand-h: linear-gradient(90deg, #00B0FF 0%, #005CFF 55%, #0000FF 100%);
+  --gold-100: #fbf1de;
+  --gold-300: #e8be72;     /* dourado claro */
+  --gold-400: #c28330;     /* dourado da Asa Branca */
+  --gold-500: #8a5a17;     /* dourado escuro (textos) */
+
+  /* DEGRADÊ DA MARCA: vermelho vivo -> vermelho -> bordô */
+  --grad-brand: linear-gradient(135deg, #e0364c 0%, #b0102b 50%, #7a001e 100%);
+  --grad-brand-rev: linear-gradient(135deg, #7a001e 0%, #b0102b 50%, #e0364c 100%);
+  --grad-brand-h: linear-gradient(90deg, #e0364c 0%, #b0102b 55%, #7a001e 100%);
+  /* degradê com o dourado da Asa Branca (destaques) */
+  --grad-gold: linear-gradient(90deg, #7a001e 0%, #b0102b 45%, #c28330 100%);
 }
 
 /* botão e barra de progresso */
@@ -29,17 +35,17 @@
   color: white;
   transition: background-position 0.35s ease, box-shadow 0.2s, transform 0.2s, opacity 0.2s;
 }
-.btn-primary:hover { background-position: 100% 0; box-shadow: 0 6px 16px rgba(0, 92, 255, 0.35); }
+.btn-primary:hover { background-position: 100% 0; box-shadow: 0 6px 16px rgba(176, 16, 43, 0.35); }
 .progress-fill { background: var(--grad-brand-h); }
-.form-group input:focus, .form-group textarea:focus, .form-group select:focus { box-shadow: 0 0 0 3px rgba(0, 92, 255, .15); }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { box-shadow: 0 0 0 3px rgba(176, 16, 43, .15); }
 
 /* faixas de topo e card de post */
 .company-hero, .empresa-hero { background: var(--grad-brand); }
-.post-card { background: linear-gradient(160deg, #00B0FF 0%, #005CFF 50%, #0000FF 100%); }
+.post-card { background: linear-gradient(160deg, #e0364c 0%, #b0102b 50%, #7a001e 100%); }
 
 /* hero da página inicial */
 .hero {
-  background: linear-gradient(120deg, #00B0FF, #005CFF 45%, #0000FF 75%, #005CFF);
+  background: linear-gradient(120deg, #e0364c, #b0102b 40%, #7a001e 72%, #570016);
   background-size: 300% 300%;
   animation: heroGradient 18s ease-in-out infinite;
   color: #ffffff;
@@ -54,7 +60,7 @@
 .hero > .container,
 .hero > *:not(.hero-bg) { position: relative; z-index: 2; }
 .hero .btn-primary { background: white; background-image: none; color: var(--unicap-600); }
-.hero .btn-primary:hover { background: var(--unicap-50); box-shadow: 0 8px 22px rgba(0, 0, 80, 0.3); }
+.hero .btn-primary:hover { background: var(--unicap-50); box-shadow: 0 8px 22px rgba(72, 8, 19, 0.3); }
 
 /* ============================================
    HERO: FUNDO ANIMADO INTERATIVO
@@ -75,9 +81,9 @@
   opacity: .55;
   animation: blobDrift 22s ease-in-out infinite;
 }
-.hero-blob.b1 { width: 460px; height: 460px; left: -120px; top: -140px; background: radial-gradient(circle, #00B0FF, transparent 70%); }
-.hero-blob.b2 { width: 520px; height: 520px; right: -160px; bottom: -200px; background: radial-gradient(circle, #0000FF, transparent 70%); animation-delay: -8s; }
-.hero-blob.b3 { width: 340px; height: 340px; left: 45%; top: 20%; background: radial-gradient(circle, #005CFF, transparent 70%); opacity: .4; animation-delay: -14s; }
+.hero-blob.b1 { width: 460px; height: 460px; left: -120px; top: -140px; background: radial-gradient(circle, #e0364c, transparent 70%); }
+.hero-blob.b2 { width: 520px; height: 520px; right: -160px; bottom: -200px; background: radial-gradient(circle, #c28330, transparent 70%); animation-delay: -8s; }
+.hero-blob.b3 { width: 340px; height: 340px; left: 45%; top: 20%; background: radial-gradient(circle, #b0102b, transparent 70%); opacity: .4; animation-delay: -14s; }
 
 @keyframes blobDrift {
   0%, 100% { transform: translate(0, 0) scale(1); }
@@ -112,7 +118,7 @@
   justify-content: center;
   background: linear-gradient(145deg, rgba(255,255,255,.28), rgba(255,255,255,.08));
   border: 1px solid rgba(255,255,255,.35);
-  box-shadow: 0 10px 30px rgba(0, 0, 90, .25), inset 0 1px 0 rgba(255,255,255,.4);
+  box-shadow: 0 10px 30px rgba(70, 0, 18, .25), inset 0 1px 0 rgba(255,255,255,.4);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   color: #fff;

@@ -26,7 +26,7 @@
   ].join(',');
 
   // Nunca anima dentro disto (exportação de PDF, modais, avisos)
-  var IGNORE = '#cvContent, .is-exporting, .modal-overlay, .modal, .notify-stack, .hero, .navbar, [data-sfx="off"]';
+  var IGNORE = '#cvContent, .is-exporting, .modal-overlay, .modal, .notify-stack, .hero, .navbar, .item-enter, .bgfx, [data-sfx="off"]';
 
   var seen = new WeakSet();
   var shown = new WeakSet();     // itens que estão visíveis no momento

@@ -1676,7 +1676,43 @@ const sectionConfig = {
 // RENDERIZAÇÃO DAS LISTAS
 // ============================================
 
+// Ids já exibidos por seção: o que for novo na próxima renderização ganha a animação de entrada.
+const _itensAnteriores = {};
+
+function animarNovosItens(section, type) {
+  if (!profile) return;
+  const ids = new Set((profile[section] || []).map(i => String(i.id)));
+  const antes = _itensAnteriores[type];
+  _itensAnteriores[type] = ids;
+  if (!antes) return; // primeira renderização: sem destaque
+
+  const container = document.getElementById(`list-${type}`);
+  if (!container) return;
+
+  let n = 0;
+  let primeiro = null;
+  container.querySelectorAll('[data-item-id]').forEach(el => {
+    if (antes.has(el.dataset.itemId)) {
+      el.setAttribute('data-sfx', 'off'); // não repete a animação de rolagem nos itens antigos
+      return;
+    }
+    el.classList.add('item-enter');
+    el.style.animationDelay = `${n * 90}ms, ${n * 90 + 150}ms`;
+    n++;
+    if (!primeiro) primeiro = el;
+  });
+
+  if (primeiro) {
+    primeiro.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
 function renderList(section, type) {
+  renderListBase(section, type);
+  animarNovosItens(section, type);
+}
+
+function renderListBase(section, type) {
   const config =
     sectionConfig[type];
 
@@ -1809,7 +1845,7 @@ function renderList(section, type) {
         ${items
         .map(
           item => `
-              <div class="skill-tag">
+              <div class="skill-tag" data-item-id="${item.id}">
 
                 ${itemCheckboxHtml(type, item.id)}
 
@@ -1874,7 +1910,7 @@ function renderList(section, type) {
     items
       .map(
         item => `
-          <div class="list-item">
+          <div class="list-item" data-item-id="${item.id}">
 
             ${itemCheckboxHtml(type, item.id)}
 
@@ -2028,11 +2064,38 @@ function showEditForm(
     </div>
   `;
 
+  clearTimeout(_hideTimers[type]);
+  editContainer.classList.remove('is-closing');
   UI.show(`edit-${type}`);
+
+  requestAnimationFrame(() => {
+    editContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      const primeiro = editContainer.querySelector(
+        'input:not([type=hidden]):not([type=checkbox]):not([type=radio]), textarea, select'
+      );
+      if (primeiro) {
+        try { primeiro.focus({ preventScroll: true }); } catch (_) { primeiro.focus(); }
+      }
+    }
+  });
 }
 
+const _hideTimers = {};
+
 function hideEditForm(type) {
-  UI.hide(`edit-${type}`);
+  const el = document.getElementById(`edit-${type}`);
+  if (!el || el.classList.contains('hidden')) {
+    UI.hide(`edit-${type}`);
+    return;
+  }
+  // some com animação antes de esconder
+  el.classList.add('is-closing');
+  clearTimeout(_hideTimers[type]);
+  _hideTimers[type] = setTimeout(() => {
+    el.classList.remove('is-closing');
+    UI.hide(`edit-${type}`);
+  }, 260);
 }
 
 // ============================================
